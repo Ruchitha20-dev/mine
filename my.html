@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Surprise!</title>
+    <style>
+        body {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 6px 10px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 800px;
+        }
+        
+        #password-container {
+            display: block;
+        }
+
+        #countdown-container, #birthday-message, #memory-album {
+            display: none;
+        }
+
+        .timer {
+            font-size: 3em;
+            color: #e74c3c;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-15px); }
+            75% { transform: translateX(15px); }
+        }
+
+        #birthday-message {
+            animation: fadeIn 2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .name {
+            color: #e67e22;
+            font-size: 4em;
+            margin: 20px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        input[type="password"] {
+            padding: 12px 20px;
+            font-size: 1.2em;
+            border: 2px solid #3498db;
+            border-radius: 25px;
+            margin: 10px;
+            width: 200px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1.2em;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: #2980b9;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .photo-item {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #f00;
+            opacity: 0.7;
+            animation: confetti-fall 5s linear infinite;
+        }
+        
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .wish-form {
+            margin-top: 20px;
+        }
+        
+        textarea {
+            width: 80%;
+            height: 100px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .polaroid {
+            background: white;
+            padding: 15px 15px 40px 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+        }
+        
+        .polaroid img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .polaroid-caption {
+            text-align: center;
+            font-family: 'Comic Sans MS', cursive;
+            margin-top: 10px;
+            color: #333;
+        }
+        
+        .heart {
+            position: absolute;
+            pointer-events: none;
+            animation: heart-float 3s ease-in-out forwards;
+        }
+        
+        @keyframes heart-float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(20deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Entry Screen -->
+    <div class="container" id="password-container">
+        <h1>Enter Secret Code 🔒</h1>
+        <input type="password" id="password-input" placeholder="Enter code">
+        <button onclick="checkPassword()">Submit</button>
+        <p>Hint: It's what you call me 😊</p>
+    </div>
+
+    <!-- Countdown Screen -->
+    <div class="container" id="countdown-container">
+        <h1>Get Ready for the Surprise! 🎉</h1>
+        <div class="timer" id="countdown">10</div>
+        <button onclick="skipCountdown()">Skip Countdown</button>
+    </div>
+
+    <!-- Birthday Message Screen -->
+    <div class="container" id="birthday-message">
+        <h1>❤️‍🔥HAVE A FABULOUS BIRTHDAY!❤️‍🔥</h1>
+        <div class="name">ANNAYA💪💞</div>
+        <h2>Wish you endless joy, success, and wonderful memories!</h2>
+        <h3>From your loving CHELLAMMA ❤</h3>
+        
+        <div class="polaroid">
+            <img src="C:\Users\SAI KRISHNA AKULA\OneDrive\Desktop\PPPPP.jpg" alt="Birthday person">
+            <div class="polaroid-caption">My Special Person!</div>
+        </div>
+        
+        <div class="wish-form">
+            <h3>Leave a birthday wish:</h3>
+            <textarea id="birthday-wish" placeholder="Type your wish here..."></textarea>
+            <button onclick="saveWish()">Save Wish</button>
+        </div>
+        
+        <button onclick="showMemoryAlbum()">View Memory Album</button>
+        <button onclick="createConfetti()">More Celebration!</button>
+    </div>
+    
+    <!-- Memory Album Screen -->
+    <div class="container" id="memory-album">
+        <h1>Memory Album 📸</h1>
+        <div class="photo-grid" id="photo-grid">
+            <!-- Photos will be added here by JavaScript -->
+        </div>
+        <button onclick="backToMessage()">Back to Birthday Message</button>
+    </div>
+    
+    <div class="music-control" onclick="toggleMusic()">
+        <span id="music-icon">🎵</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const passwordContainer = document.getElementById('password-container');
+        const countdownContainer = document.getElementById('countdown-container');
+        const birthdayMessage = document.getElementById('birthday-message');
+        const memoryAlbum = document.getElementById('memory-album');
+        const countdownDisplay = document.getElementById('countdown');
+        const passwordInput = document.getElementById('password-input');
+        const photoGrid = document.getElementById('photo-grid');
+        const musicIcon = document.getElementById('music-icon');
+        
+        // Sample photo URLs - replace with actual image paths
+        const samplePhotos = [
+            "C:\Users\SAI KRISHNA AKULA\OneDrive\Desktop\PPPPP.jpg",
+            "path_to_photo2.jpg",
+            "path_to_photo3.jpg",
+            "path_to_photo4.jpg",
+            "path_to_photo5.jpg"
+        ];
+        
+        let countdownInterval;
+        let seconds = 10;
+        let audio = new Audio('happy-birthday-song.mp3'); // Add your audio file
+        let isMusicPlaying = false;
+
+        function checkPassword() {
+            if (passwordInput.value.trim().toLowerCase() === 'chellamma') {
+                passwordContainer.style.display = 'none';
+                countdownContainer.style.display = 'block';
+                startCountdown();
+            } else {
+                passwordContainer.classList.add('shake');
+                setTimeout(() => passwordContainer.classList.remove('shake'), 500);
+            }
+        }
+
+        function startCountdown() {
+            seconds = 10;
+            countdownDisplay.textContent = seconds;
+            clearInterval(countdownInterval);
+            
+            countdownInterval = setInterval(() => {
+                seconds--;
+                countdownDisplay.textContent = seconds;
+
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    showBirthdayMessage();
+                }
+            }, 1000);
+        }
+        
+        function skipCountdown() {
+            clearInterval(countdownInterval);
+            showBirthdayMessage();
+        }
+        
+        function showBirthdayMessage() {
+            countdownContainer.style.display = 'none';
+            birthdayMessage.style.display = 'block';
+            createConfetti();
+            toggleMusic(); // Auto-play music
+        }
+
+        function showMemoryAlbum() {
+            birthdayMessage.style.display = 'none';
+            memoryAlbum.style.display = 'block';
+            
+            // Clear previous photos
+            photoGrid.innerHTML = '';
+            
+            // Add sample photos to the grid
+            samplePhotos.forEach(photo => {
+                if (photo) { // Only add if path exists
+                    const photoItem = document.createElement('div');
+                    photoItem.className = 'photo-item';
+                    photoItem.innerHTML = `<img src="${photo}" alt="Memory photo">`;
+                    photoGrid.appendChild(photoItem);
+                }
+            });
+        }
+        
+        function backToMessage() {
+            memoryAlbum.style.display = 'none';
+            birthdayMessage.style.display = 'block';
+        }
+        
+        function createConfetti() {
+            // Create 50 confetti pieces
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const left = Math.random() * 100;
+                const animationDuration = Math.random() * 3 + 2;
+                
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}vw`;
+                confetti.style.animationDuration = `${animationDuration}s`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, animationDuration * 1000);
+            }
+        }
+        
+        function saveWish() {
+            const wish = document.getElementById('birthday-wish').value;
+            if (wish.trim()) {
+                alert('Thank you for your wish! ❤️');
+                // Here you could save the wish to localStorage or send to a server
+                document.getElementById('birthday-wish').value = '';
+            } else {
+                alert('Please type your wish first!');
+            }
+        }
+        
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                audio.pause();
+                musicIcon.textContent = '🎵';
+            } else {
+                audio.play();
+                musicIcon.textContent = '🔊';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = `${Math.random() * 100}vw`;
+            heart.style.fontSize = `${Math.random() * 20 + 10}px`;
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 3000);
+        }
+
+        // Allow Enter key to submit password
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+        
+        // Create occasional floating hearts
+        setInterval(createHeart, 1000);
+        
+        // Initialize photo grid with sample images
+        window.addEventListener('load', () => {
+            // You could load saved wishes or other data here
+        });
+    </script>
+</body>
+</html>
